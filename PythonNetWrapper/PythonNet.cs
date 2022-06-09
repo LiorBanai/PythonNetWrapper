@@ -11,12 +11,12 @@ namespace PythonnetWrapper
 {
     public class PythonNet : IPythonEngine
     {
-        private Lazy<PyScope> m_scope;
+        private Lazy<PyModule> m_scope;
         private PythonLogger m_logger = new PythonLogger();
 
         public PythonNet()
         {
-            m_scope = new Lazy<PyScope>(Py.CreateScope);
+            m_scope = new Lazy<PyModule>(Py.CreateScope);
         }
 
         public void Dispose()
@@ -199,9 +199,13 @@ namespace PythonnetWrapper
 
             using (Py.GIL())
             {
-                var src = "import sys\n" +
-                           $"sys.path.extend({searchPaths.ToPython()})";
-                ExecuteCommand(src, out _);
+                dynamic sys = Py.Import("sys");
+                dynamic os = Py.Import("os");
+
+                foreach (string path in searchPaths)
+                {
+                    sys.path.append(os.path.dirname(os.path.expanduser(path)));
+                }
             }
         }
 

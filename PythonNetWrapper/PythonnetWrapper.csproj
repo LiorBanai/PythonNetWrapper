@@ -14,7 +14,7 @@
 	  <PackageId>PythonNetWrapper</PackageId>
 	  <Authors>Lior Banai</Authors>
 	  <RepositoryType>git</RepositoryType>
-	  <Version>0.8.0</Version>
+	  <Version>0.8.1</Version>
 	  <PackageIcon>PythonnetWrapper.png</PackageIcon>
 	  <PackageReleaseNotes>Initial version</PackageReleaseNotes>
 	  <Copyright>Lior Banai © 2022</Copyright>
@@ -36,8 +36,6 @@
   <ItemGroup>
     <PackageReference Include="pythonnet" Version="3.0.0-preview2022-04-11" />
     <PackageReference Include="Autofac" Version="6.4.0" />
-    <PackageReference Include="pythonnet_netstandard_py37_win" Version="2.5.2" />
-    <PackageReference Include="Python.Runtime.NETStandard" Version="3.7.1" />
   </ItemGroup>
 	<ItemGroup>
 		<None Include="..\PythonnetWrapper.png">
