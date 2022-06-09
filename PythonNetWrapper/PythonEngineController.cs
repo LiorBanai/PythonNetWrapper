@@ -11,19 +11,23 @@ namespace PythonnetWrapper
         private readonly IPythonEngine _pythonEngine;
         private string pathToVirtualEnv;
         private string pythonExecutableFolder;
+        private string pythonExe = "python37.dll";
         private IntPtr pythonThreads;
         private bool enableLogging;
-        public PythonEngineController(IPythonEngine pythonEngine, string pathToVirtualEnv, string pythonExecutableFolder, bool enableLogging)
+        public PythonEngineController(IPythonEngine pythonEngine, string pathToVirtualEnv, string pythonExecutableFolder, string pythonExe, bool enableLogging)
         {
             _pythonEngine = pythonEngine;
             this.pathToVirtualEnv = pathToVirtualEnv;
             this.pythonExecutableFolder = pythonExecutableFolder;
+            if (!string.IsNullOrEmpty(pythonExe))
+            {
+                this.pythonExe = pythonExe;
+            }
             this.enableLogging = enableLogging;
         }
         public void Initialize()
         {
             var path = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
-            // PythonEngine.PythonPath = path;
             string pathEnv = string.Empty;
             var searchPAth = new List<string>();
             if (!string.IsNullOrEmpty(pathToVirtualEnv))
@@ -33,16 +37,14 @@ namespace PythonnetWrapper
                 string env = $"{pathToPackages};{pathToLib}";
                 Environment.SetEnvironmentVariable("PYTHONPATH", env, EnvironmentVariableTarget.Process);
                 pathEnv = path = $"{path};{pathToPackages};{pathToLib}";
-                //Environment.SetEnvironmentVariable("PATH", path, EnvironmentVariableTarget.Process);
                 searchPAth.Add(pathToLib);
                 searchPAth.Add(pathToPackages);
-                searchPAth.Add(@"D:\git\kcm_algo");
             }
 
             if (!string.IsNullOrEmpty(pythonExecutableFolder))
             {
                 pathEnv = $"{path};{pythonExecutableFolder}";
-                Runtime.PythonDLL = Path.Combine(pythonExecutableFolder, "python37.dll");
+                Runtime.PythonDLL = Path.Combine(pythonExecutableFolder, pythonExe);
 
             }
 
