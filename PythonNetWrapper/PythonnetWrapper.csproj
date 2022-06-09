@@ -23,6 +23,7 @@
 	  <RootNamespace>PythonnetWrapper</RootNamespace>
 	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
 	  <PackageProjectUrl>https://github.com/LiorBanai/PythonNetWrapper</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/LiorBanai/PythonNetWrapper</RepositoryUrl>
 	  <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	  <ApplicationIcon>PythonnetWrapper.ico</ApplicationIcon>
