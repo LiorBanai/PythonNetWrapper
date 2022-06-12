@@ -91,9 +91,9 @@ namespace PythonNetWrapper
             return _pythonWrapperEngine.ExecuteCommand<T>(script,throwOnErrors, out log);
         }
 
-        public T ImportScript<T>(string fileName, out string log)
+        public PyObject ImportScript(string fileName, out string log)
         {
-            return _pythonWrapperEngine.ImportScript<T>(fileName,throwOnErrors, out log);
+            return _pythonWrapperEngine.ImportScript(fileName,throwOnErrors, out log);
         }
 
         public T ExecuteMethod<T>(string fileName, string methodName, out string log, params PyObject[] args)

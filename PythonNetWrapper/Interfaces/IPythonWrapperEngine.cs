@@ -9,7 +9,7 @@ namespace PythonNetWrapper.Interfaces
     {
         // executes a Python command
         T ExecuteCommand<T>(string command, bool throwOnErrors, out string log);
-        T ImportScript<T>(string fileName, bool throwOnErrors, out string log);
+        PyObject ImportScript(string fileName, bool throwOnErrors, out string log);
         T ExecuteMethod<T>(string fileName,string methodName, bool throwOnErrors, out string log, params PyObject[] args);
         T ExecuteMethodOnScriptObject<T>(PyObject script, string methodName, bool throwOnErrors, out string log, params PyObject[] args);
         // sets an object in Python's scope

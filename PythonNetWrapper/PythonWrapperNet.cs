@@ -13,7 +13,7 @@ namespace PythonNetWrapper
     {
         private Lazy<PyModule> module;
         private readonly PythonLogger _logger = new PythonLogger();
-
+        private List<string> existingPaths = new List<string>();
         public PythonWrapperNet()
         {
             module = new Lazy<PyModule>(Py.CreateScope);
@@ -79,33 +79,42 @@ namespace PythonNetWrapper
             return result;
         }
 
-        public T ImportScript<T>(string fileName, bool throwOnErrors, out string log)
+        public PyObject ImportScript(string fileName, bool throwOnErrors, out string log)
         {
-            T result = default;
+            PyObject result = default;
             log = "";
 
             try
             {
+                string filePath = Path.GetDirectoryName(fileName);
                 using (Py.GIL())
                 {
                     dynamic sys = Py.Import("sys");
                     dynamic os = Py.Import("os");
-                    bool pathExist = false;
-                    foreach (var p in sys.path)
+
+                    bool pathExist = existingPaths.Contains(fileName);
+                    if (!pathExist)
                     {
-                        if (p.ToString().Contains(Path.GetDirectoryName(fileName)))
+                        foreach (var p in sys.path)
                         {
-                            pathExist = true;
-                            break;
+                            var pythonPath = p.ToString(); 
+                            existingPaths.Add(pythonPath);
+                            if (pythonPath.Contains(filePath))
+                            {
+                                pathExist = true;
+                                break;
+                            }
                         }
                     }
 
                     if (!pathExist)
                     {
-                        sys.path.append(os.path.dirname(os.path.expanduser(fileName)));
+                        var newPath = os.path.dirname(os.path.expanduser(fileName));
+                        sys.path.append(newPath);
+                        existingPaths.Add(newPath.ToString());
                     }
 
-                    result = Py.Import(Path.GetFileNameWithoutExtension(fileName)).As<T>();
+                    result = Py.Import(Path.GetFileNameWithoutExtension(fileName));
                     log = _logger.ReadStream();
                     _logger.flush();
                 }
@@ -129,10 +138,13 @@ namespace PythonNetWrapper
 
             try
             {
-                result = script.InvokeMethod(methodName, args).As<T>();
-                log = _logger.ReadStream();
-                _logger.flush();
-                return result;
+                using (Py.GIL())
+                {
+                    result = script.InvokeMethod(methodName, args).As<T>();
+                    log = _logger.ReadStream();
+                    _logger.flush();
+                    return result;
+                }
             }
             catch (Exception ex)
             {
@@ -242,7 +254,7 @@ namespace PythonNetWrapper
                                      "sys.stdout.flush()\n" +
                                      "sys.stderr = Logger\n" +
                                      "sys.stderr.flush()\n";
-            ExecuteCommand<PyObject>(loggerSrc,throwOnErrors, out _);
+            ExecuteCommand<PyObject>(loggerSrc, throwOnErrors, out _);
         }
     }
 }
