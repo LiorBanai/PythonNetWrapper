@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using PythonnetWrapper.Interfaces;
+using PythonNetWrapper.Interfaces;
 
-namespace PythonnetWrapper
+namespace PythonNetWrapper
 {
     public class PythonLogger : IPythonLogger
     {

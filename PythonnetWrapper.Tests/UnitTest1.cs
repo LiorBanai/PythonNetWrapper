@@ -3,9 +3,9 @@ using System.IO;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Python.Runtime;
-using PythonnetWrapper.Interfaces;
+using PythonNetWrapper.Interfaces;
 
-namespace PythonnetWrapper.Tests
+namespace PythonNetWrapper.Tests
 {
     [TestClass]
     public class UnitTest1
@@ -15,25 +15,30 @@ namespace PythonnetWrapper.Tests
         [TestInitialize]
         public void TestInitialize()
         {
+            string pythonLocation = Environment.GetEnvironmentVariable("pythonLocation");
+            if (string.IsNullOrEmpty(pythonLocation))
+            {
+                pythonLocation = @"C:\Users\liorb\AppData\Local\Programs\Python\Python37";
+            }
             var builder = new ContainerBuilder();
-            builder.RegisterType<PythonNet>().As<IPythonEngine>().InstancePerLifetimeScope();
-            builder.RegisterType<PythonEngineController>().As<IPythonEngineController>().
+            builder.RegisterType<PythonWrapperNet>().As<IPythonWrapperEngine>().InstancePerLifetimeScope();
+            builder.RegisterType<PythonWrapperController>().As<IPythonWrapperController>().
                 WithParameters(new[]
                 {
                     new NamedParameter("pathToVirtualEnv", @""),
-                    new NamedParameter("pythonExecutableFolder",Environment.GetEnvironmentVariable("pythonLocation")),
+                    new NamedParameter("pythonExecutableFolder",pythonLocation),
                     new NamedParameter("pythonDll","python37.dll"),
                     new NamedParameter("enableLogging",true)
                 })
                 .InstancePerLifetimeScope();
             Container = builder.Build();
-            Container.Resolve<IPythonEngineController>().Initialize();
-            Container.Resolve<IPythonEngine>().Initialize(Container);
+            Container.Resolve<IPythonWrapperController>().Initialize();
+            Container.Resolve<IPythonWrapperEngine>().Initialize(Container);
         }
         [TestMethod]
         public void TestMethod1()
         {
-            var controller = Container.Resolve<IPythonEngineController>();
+            var controller = Container.Resolve<IPythonWrapperController>();
             var filename = Path.Combine(Directory.GetCurrentDirectory(), @"pythonScripts\testpythonnet.py");
             PyList types = new PyList();
             types.Append(new PyInt(1));
@@ -46,6 +51,6 @@ namespace PythonnetWrapper.Tests
 
         }
 
-        
+
     }
 }

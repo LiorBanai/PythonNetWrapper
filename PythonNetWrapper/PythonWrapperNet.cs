@@ -5,23 +5,23 @@ using System.Linq;
 using System.Text;
 using Autofac;
 using Python.Runtime;
-using PythonnetWrapper.Interfaces;
+using PythonNetWrapper.Interfaces;
 
-namespace PythonnetWrapper
+namespace PythonNetWrapper
 {
-    public class PythonNet : IPythonEngine
+    public class PythonWrapperNet : IPythonWrapperEngine
     {
-        private Lazy<PyModule> m_scope;
-        private PythonLogger m_logger = new PythonLogger();
+        private Lazy<PyModule> module;
+        private readonly PythonLogger _logger = new PythonLogger();
 
-        public PythonNet()
+        public PythonWrapperNet()
         {
-            m_scope = new Lazy<PyModule>(Py.CreateScope);
+            module = new Lazy<PyModule>(Py.CreateScope);
         }
 
         public void Dispose()
         {
-            m_scope.Value.Dispose();
+            module.Value.Dispose();
         }
 
         public string PythonPaths()
@@ -53,7 +53,7 @@ namespace PythonnetWrapper
                 return $"Python Error: {ex} ({nameof(ExecuteMethodOnScriptObject)})";
             }
         }
-        public PyObject ExecuteCommand(string command, out string log)
+        public PyObject? ExecuteCommand(string command, out string log)
         {
             PyObject result = null;
             log = "";
@@ -62,9 +62,9 @@ namespace PythonnetWrapper
                 using (Py.GIL())
                 {
                     var pyCompile = Python.Runtime.PythonEngine.Compile(command);
-                    result = m_scope.Value.Execute(pyCompile);
-                    log = m_logger.ReadStream();
-                    m_logger.flush();
+                    result = module.Value.Execute(pyCompile);
+                    log = _logger.ReadStream();
+                    _logger.flush();
                 }
             }
             catch (Exception ex)
@@ -75,7 +75,7 @@ namespace PythonnetWrapper
             return result;
         }
 
-        public PyObject ImportScript(string fileName, out string log)
+        public PyObject? ImportScript(string fileName, out string log)
         {
             PyObject result = null;
             log = "";
@@ -102,8 +102,8 @@ namespace PythonnetWrapper
                     }
 
                     result = Py.Import(Path.GetFileNameWithoutExtension(fileName));
-                    log = m_logger.ReadStream();
-                    m_logger.flush();
+                    log = _logger.ReadStream();
+                    _logger.flush();
                 }
             }
             catch (Exception ex)
@@ -115,15 +115,15 @@ namespace PythonnetWrapper
 
         }
 
-        public PyObject ExecuteMethodOnScriptObject(PyObject script, string methodName, out string log, params PyObject[] args)
+        public PyObject? ExecuteMethodOnScriptObject(PyObject script, string methodName, out string log, params PyObject[] args)
         {
             PyObject result = null;
 
             try
             {
                 result = script.InvokeMethod(methodName, args);
-                log = m_logger.ReadStream();
-                m_logger.flush();
+                log = _logger.ReadStream();
+                _logger.flush();
                 return result;
             }
             catch (Exception ex)
@@ -133,7 +133,7 @@ namespace PythonnetWrapper
 
             return result;
         }
-        public PyObject ExecuteMethod(string fileName, string methodName, out string log, params PyObject[] args)
+        public PyObject? ExecuteMethod(string fileName, string methodName, out string log, params PyObject[] args)
         {
             PyObject result = null;
             log = "";
@@ -161,8 +161,8 @@ namespace PythonnetWrapper
 
                     PyObject fromFile = Py.Import(Path.GetFileNameWithoutExtension(fileName));
                     result = fromFile.InvokeMethod(methodName, args);
-                    log = m_logger.ReadStream();
-                    m_logger.flush();
+                    log = _logger.ReadStream();
+                    _logger.flush();
                 }
             }
             catch (Exception ex)
@@ -213,13 +213,13 @@ namespace PythonnetWrapper
         {
             using (Py.GIL())
             {
-                m_scope.Value.Set(name, value.ToPython());
+                module.Value.Set(name, value.ToPython());
             }
         }
 
         public void SetupLogger()
         {
-            SetVariable("Logger", m_logger);
+            SetVariable("Logger", _logger);
             const string loggerSrc = "import sys\n" +
                                      "from io import StringIO\n" +
                                      "sys.stdout = Logger\n" +

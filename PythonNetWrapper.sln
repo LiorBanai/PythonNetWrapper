@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PythonnetWrapper", "PythonNetWrapper\PythonnetWrapper.csproj", "{81F8300C-E604-4AE5-902A-8B1B71AD74EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PythonNetWrapper", "PythonNetWrapper\PythonNetWrapper.csproj", "{81F8300C-E604-4AE5-902A-8B1B71AD74EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PythonnetWrapper.Tests", "PythonnetWrapper.Tests\PythonnetWrapper.Tests.csproj", "{E0175EE7-B665-4503-9696-FFB91D447363}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PythonnetWrapper.Tests", "PythonnetWrapper.Tests\PythonnetWrapper.Tests.csproj", "{E0175EE7-B665-4503-9696-FFB91D447363}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -14,13 +14,13 @@
 	  <PackageId>PythonNetWrapper</PackageId>
 	  <Authors>Lior Banai</Authors>
 	  <RepositoryType>git</RepositoryType>
-	  <Version>0.8.3</Version>
+	  <Version>0.8.3.1</Version>
 	  <PackageIcon>PythonnetWrapper.png</PackageIcon>
 	  <PackageReleaseNotes>Initial version</PackageReleaseNotes>
 	  <Copyright>Lior Banai © 2022</Copyright>
-	  <Product>PythonnetWrapper</Product>
-	  <AssemblyName>PythonnetWrapper</AssemblyName>
-	  <RootNamespace>PythonnetWrapper</RootNamespace>
+	  <Product>PythonNetWrapper</Product>
+	  <AssemblyName>PythonNetWrapper</AssemblyName>
+	  <RootNamespace>PythonNetWrapper</RootNamespace>
 	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
 	  <PackageProjectUrl>https://github.com/LiorBanai/PythonNetWrapper</PackageProjectUrl>
 	  <RepositoryUrl>https://github.com/LiorBanai/PythonNetWrapper</RepositoryUrl>

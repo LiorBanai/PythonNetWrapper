@@ -19,7 +19,7 @@
 
 
 	<ItemGroup>
-	  <ProjectReference Include="..\PythonNetWrapper\PythonnetWrapper.csproj" />
+	  <ProjectReference Include="..\PythonNetWrapper\PythonNetWrapper.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -2,22 +2,22 @@
 using System.Collections.Generic;
 using System.IO;
 using Python.Runtime;
-using PythonnetWrapper.Interfaces;
+using PythonNetWrapper.Interfaces;
 
-namespace PythonnetWrapper
+namespace PythonNetWrapper
 {
-    public class PythonEngineController : IPythonEngineController
+    public class PythonWrapperController : IPythonWrapperController
     {
-        private readonly IPythonEngine _pythonEngine;
+        private readonly IPythonWrapperEngine _pythonWrapperEngine;
         private string pathToVirtualEnv;
         private string pythonExecutableFolder;
-        private string pythonDll;
+        private string pythonDll = "python37.dll";
         private IntPtr pythonThreads;
         private bool enableLogging;
 
-        public PythonEngineController(IPythonEngine pythonEngine, string pathToVirtualEnv, string pythonExecutableFolder, string pythonDll = "python37.dll", bool enableLogging = true)
+        public PythonWrapperController(IPythonWrapperEngine pythonWrapperEngine, string pathToVirtualEnv, string pythonExecutableFolder, string pythonDll = "python37.dll", bool enableLogging = true)
         {
-            _pythonEngine = pythonEngine;
+            _pythonWrapperEngine = pythonWrapperEngine;
             this.pathToVirtualEnv = pathToVirtualEnv;
             this.pythonExecutableFolder = pythonExecutableFolder;
             if (!string.IsNullOrEmpty(pythonDll))
@@ -27,7 +27,7 @@ namespace PythonnetWrapper
             this.enableLogging = enableLogging;
         }
 
-        public PythonEngineController(string pathToVirtualEnv, string pythonExecutableFolder, string pythonDll = "python37.dll", bool enableLogging = true) : this(new PythonNet(), pathToVirtualEnv, pythonExecutableFolder, pythonDll, enableLogging)
+        public PythonWrapperController(string pathToVirtualEnv, string pythonExecutableFolder, string pythonDll = "python37.dll", bool enableLogging = true) : this(new PythonWrapperNet(), pathToVirtualEnv, pythonExecutableFolder, pythonDll, enableLogging)
         {
         }
         public void Initialize()
@@ -68,33 +68,34 @@ namespace PythonnetWrapper
                                                      Environment.GetEnvironmentVariable("PYTHONPATH", EnvironmentVariableTarget.Process);
             PythonEngine.PythonHome = pathToVirtualEnv;
             PythonEngine.Initialize();
-            _pythonEngine.SetSearchPath(searchPAth);
-            var paths = _pythonEngine.PythonPaths();
+            pythonThreads = PythonEngine.BeginAllowThreads();
+            _pythonWrapperEngine.SetSearchPath(searchPAth);
+            var paths = _pythonWrapperEngine.PythonPaths();
             if (enableLogging)
             {
-                _pythonEngine.SetupLogger();
+                _pythonWrapperEngine.SetupLogger();
             }
         }
 
-        public PyObject RunScript(string script, out string log)
+        public PyObject? RunScript(string script, out string log)
         {
-            return _pythonEngine.ExecuteCommand(script, out log);
+            return _pythonWrapperEngine.ExecuteCommand(script, out log);
         }
 
-        public PyObject ImportScript(string fileName, out string log)
+        public PyObject? ImportScript(string fileName, out string log)
         {
-            return _pythonEngine.ImportScript(fileName, out log);
+            return _pythonWrapperEngine.ImportScript(fileName, out log);
         }
 
-        public PyObject ExecuteMethod(string fileName, string methodName, out string log, params PyObject[] args)
+        public PyObject? ExecuteMethod(string fileName, string methodName, out string log, params PyObject[] args)
         {
-            return _pythonEngine.ExecuteMethod(fileName, methodName, out log, args);
+            return _pythonWrapperEngine.ExecuteMethod(fileName, methodName, out log, args);
         }
 
-        public PyObject ExecuteMethodOnScriptObject(PyObject script, string methodName, out string log,
+        public PyObject? ExecuteMethodOnScriptObject(PyObject script, string methodName, out string log,
             params PyObject[] args)
         {
-            return _pythonEngine.ExecuteMethodOnScriptObject(script, methodName, out log, args);
+            return _pythonWrapperEngine.ExecuteMethodOnScriptObject(script, methodName, out log, args);
 
         }
 
