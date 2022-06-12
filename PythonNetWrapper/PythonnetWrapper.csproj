@@ -11,6 +11,7 @@
 	  <Nullable>enable</Nullable>
 	  <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 	  <LangVersion>8.0</LangVersion>
+	  <Description>C# Wrapper for Pythonnet Library for calling Python files for C#</Description>
 	  <PackageId>PythonNetWrapper</PackageId>
 	  <Authors>Lior Banai</Authors>
 	  <RepositoryType>git</RepositoryType>
