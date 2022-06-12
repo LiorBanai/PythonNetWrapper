@@ -11,19 +11,24 @@ namespace PythonnetWrapper
         private readonly IPythonEngine _pythonEngine;
         private string pathToVirtualEnv;
         private string pythonExecutableFolder;
-        private string pythonExe = "python37.dll";
+        private string pythonDll;
         private IntPtr pythonThreads;
         private bool enableLogging;
-        public PythonEngineController(IPythonEngine pythonEngine, string pathToVirtualEnv, string pythonExecutableFolder, string pythonExe, bool enableLogging)
+        
+        public PythonEngineController(IPythonEngine pythonEngine, string pathToVirtualEnv, string pythonExecutableFolder, string pythonDll = "python37.dll", bool enableLogging = true)
         {
             _pythonEngine = pythonEngine;
             this.pathToVirtualEnv = pathToVirtualEnv;
             this.pythonExecutableFolder = pythonExecutableFolder;
-            if (!string.IsNullOrEmpty(pythonExe))
+            if (!string.IsNullOrEmpty(pythonDll))
             {
-                this.pythonExe = pythonExe;
+                this.pythonDll = pythonDll;
             }
             this.enableLogging = enableLogging;
+        }
+
+        public PythonEngineController(string pathToVirtualEnv, string pythonExecutableFolder, string pythonDll = "python37.dll", bool enableLogging = true) : this(new PythonNet(), pathToVirtualEnv, pythonExecutableFolder, pythonDll, enableLogging)
+        {
         }
         public void Initialize()
         {
@@ -44,7 +49,7 @@ namespace PythonnetWrapper
             if (!string.IsNullOrEmpty(pythonExecutableFolder))
             {
                 pathEnv = $"{path};{pythonExecutableFolder}";
-                Runtime.PythonDLL = Path.Combine(pythonExecutableFolder, pythonExe);
+                Runtime.PythonDLL = Path.Combine(pythonExecutableFolder, pythonDll);
 
             }
 
@@ -57,14 +62,12 @@ namespace PythonnetWrapper
             //Environment.SetEnvironmentVariable("PYTHONHOME", pathToVirtualEnv, EnvironmentVariableTarget.Process);
             //Environment.SetEnvironmentVariable("PYTHONPATH", $"{pathToVirtualEnv}\\Lib\\site-packages;{pathToVirtualEnv}\\Lib", EnvironmentVariableTarget.Process);
 
-            Python.Runtime.PythonEngine.PythonPath = Python.Runtime.PythonEngine.PythonPath + Path.PathSeparator +
+            PythonEngine.PythonPath = PythonEngine.PythonPath + Path.PathSeparator +
                                                      Environment.GetEnvironmentVariable("PYTHONPATH", EnvironmentVariableTarget.Process);
-            Python.Runtime.PythonEngine.PythonHome = pathToVirtualEnv;
-            Python.Runtime.PythonEngine.Initialize();
-            //pythonThreads = Python.Runtime.PythonEngine.BeginAllowThreads();
-            var paths = _pythonEngine.PythonPaths();
-            //Python.Runtime.PythonEngine.PythonHome = pathToVirtualEnv;
+            PythonEngine.PythonHome = pathToVirtualEnv;
+            PythonEngine.Initialize();
             _pythonEngine.SetSearchPath(searchPAth);
+            var paths = _pythonEngine.PythonPaths();
             if (enableLogging)
             {
                 _pythonEngine.SetupLogger();
@@ -97,9 +100,9 @@ namespace PythonnetWrapper
         {
             if (pythonThreads != IntPtr.Zero)
             {
-                Python.Runtime.PythonEngine.EndAllowThreads(pythonThreads);
+                PythonEngine.EndAllowThreads(pythonThreads);
             }
-            Python.Runtime.PythonEngine.Shutdown();
+            PythonEngine.Shutdown();
         }
     }
 }
