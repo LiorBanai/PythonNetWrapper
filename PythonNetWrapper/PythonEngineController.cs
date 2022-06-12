@@ -14,7 +14,7 @@ namespace PythonnetWrapper
         private string pythonDll;
         private IntPtr pythonThreads;
         private bool enableLogging;
-        
+
         public PythonEngineController(IPythonEngine pythonEngine, string pathToVirtualEnv, string pythonExecutableFolder, string pythonDll = "python37.dll", bool enableLogging = true)
         {
             _pythonEngine = pythonEngine;
@@ -35,7 +35,7 @@ namespace PythonnetWrapper
             var path = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
             string pathEnv = string.Empty;
             var searchPAth = new List<string>();
-            if (!string.IsNullOrEmpty(pathToVirtualEnv))
+            if (!string.IsNullOrEmpty(pathToVirtualEnv) && Directory.Exists(pathToVirtualEnv))
             {
                 string pathToLib = Path.Combine(pathToVirtualEnv, "lib");
                 string pathToPackages = Path.Combine(pathToLib, "site-packages");
@@ -46,10 +46,12 @@ namespace PythonnetWrapper
                 searchPAth.Add(pathToPackages);
             }
 
-            if (!string.IsNullOrEmpty(pythonExecutableFolder))
+            if (!string.IsNullOrEmpty(pythonExecutableFolder) && Directory.Exists(pythonExecutableFolder))
             {
                 pathEnv = $"{path};{pythonExecutableFolder}";
-                Runtime.PythonDLL = Path.Combine(pythonExecutableFolder, pythonDll);
+                string pythonPath = Path.Combine(pythonExecutableFolder, pythonDll);
+                if (File.Exists(pythonPath))
+                    Runtime.PythonDLL = pythonPath;
 
             }
 
