@@ -8,13 +8,13 @@ namespace PythonNetWrapper.Interfaces
     public interface IPythonWrapperEngine : IDisposable
     {
         // executes a Python command
-        T ExecuteCommand<T>(string command, out string log);
-        T ImportScript<T>(string fileName, out string log);
-        T ExecuteMethod<T>(string fileName,string methodName, out string log, params PyObject[] args);
-        T ExecuteMethodOnScriptObject<T>(PyObject script, string methodName, out string log, params PyObject[] args);
+        T ExecuteCommand<T>(string command, bool throwOnErrors, out string log);
+        T ImportScript<T>(string fileName, bool throwOnErrors, out string log);
+        T ExecuteMethod<T>(string fileName,string methodName, bool throwOnErrors, out string log, params PyObject[] args);
+        T ExecuteMethodOnScriptObject<T>(PyObject script, string methodName, bool throwOnErrors, out string log, params PyObject[] args);
         // sets an object in Python's scope
         void SetVariable(string name, object value);
-        void SetupLogger();
+        void SetupLogger(bool throwOnErrors);
 
         // Python's search path
         IList<string> SearchPaths();

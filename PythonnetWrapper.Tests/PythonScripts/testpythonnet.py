@@ -1,10 +1,15 @@
 ﻿import builtins
 
-def testvalue(R,     # timestamp of the new R-peak
-               PVC ):
+def return3int(R, PVC ):
    for x in R:
     print(x) #write(x)
   
    for x in PVC:
     print(x) #write(x)
-   return R
+   return 3
+
+def returntruebool():
+   return True
+
+def noreturnvalue():
+   print('No Return Value') #write(x)

@@ -53,7 +53,7 @@ namespace PythonNetWrapper
                 return $"Python Error: {ex} ({nameof(ExecuteMethodOnScriptObject)})";
             }
         }
-        public T ExecuteCommand<T>(string command, out string log)
+        public T ExecuteCommand<T>(string command, bool throwOnErrors, out string log)
         {
             T result = default;
             log = "";
@@ -70,12 +70,16 @@ namespace PythonNetWrapper
             catch (Exception ex)
             {
                 log = $"Python Error: {ex} ({nameof(ExecuteCommand)})";
+                if (throwOnErrors)
+                {
+                    throw;
+                }
             }
 
             return result;
         }
 
-        public T ImportScript<T>(string fileName, out string log)
+        public T ImportScript<T>(string fileName, bool throwOnErrors, out string log)
         {
             T result = default;
             log = "";
@@ -109,13 +113,17 @@ namespace PythonNetWrapper
             catch (Exception ex)
             {
                 log = $"Python Error: {ex} ({nameof(ImportScript)})";
+                if (throwOnErrors)
+                {
+                    throw;
+                }
             }
 
             return result;
 
         }
 
-        public T ExecuteMethodOnScriptObject<T>(PyObject script, string methodName, out string log, params PyObject[] args)
+        public T ExecuteMethodOnScriptObject<T>(PyObject script, string methodName, bool throwOnErrors, out string log, params PyObject[] args)
         {
             T result = default;
 
@@ -129,11 +137,15 @@ namespace PythonNetWrapper
             catch (Exception ex)
             {
                 log = $"Python Error: {ex} ({nameof(ExecuteMethodOnScriptObject)})";
+                if (throwOnErrors)
+                {
+                    throw;
+                }
             }
 
             return result;
         }
-        public T ExecuteMethod<T>(string fileName, string methodName, out string log, params PyObject[] args)
+        public T ExecuteMethod<T>(string fileName, string methodName, bool throwOnErrors, out string log, params PyObject[] args)
         {
             T result = default;
             log = "";
@@ -168,6 +180,10 @@ namespace PythonNetWrapper
             catch (Exception ex)
             {
                 log = $"Python Error: {ex} ({nameof(ExecuteMethod)})";
+                if (throwOnErrors)
+                {
+                    throw;
+                }
             }
 
             return result;
@@ -217,7 +233,7 @@ namespace PythonNetWrapper
             }
         }
 
-        public void SetupLogger()
+        public void SetupLogger(bool throwOnErrors)
         {
             SetVariable("Logger", _logger);
             const string loggerSrc = "import sys\n" +
@@ -226,7 +242,7 @@ namespace PythonNetWrapper
                                      "sys.stdout.flush()\n" +
                                      "sys.stderr = Logger\n" +
                                      "sys.stderr.flush()\n";
-            ExecuteCommand<PyObject>(loggerSrc, out _);
+            ExecuteCommand<PyObject>(loggerSrc,throwOnErrors, out _);
         }
     }
 }
