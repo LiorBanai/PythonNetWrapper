@@ -19,8 +19,8 @@ namespace PythonnetWrapper.Tests
             builder.RegisterType<PythonEngineController>().As<IPythonEngineController>().
                 WithParameters(new[]
                 {
-                    new NamedParameter("pathToVirtualEnv", @"C:\Users\liorb\PycharmProjects\pythonProject\venv"),
-                    new NamedParameter("pythonExecutableFolder",@"C:\Users\liorb\AppData\Local\Programs\Python\Python37"),
+                    new NamedParameter("pathToVirtualEnv", @""),
+                    new NamedParameter("pythonExecutableFolder",@""),
                     new NamedParameter("pythonDll","python37.dll"),
                     new NamedParameter("enableLogging",true)
                 })
