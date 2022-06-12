@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,7 +21,7 @@ namespace PythonnetWrapper.Tests
                 WithParameters(new[]
                 {
                     new NamedParameter("pathToVirtualEnv", @""),
-                    new NamedParameter("pythonExecutableFolder",@""),
+                    new NamedParameter("pythonExecutableFolder",Environment.GetEnvironmentVariable("pythonLocation")),
                     new NamedParameter("pythonDll","python37.dll"),
                     new NamedParameter("enableLogging",true)
                 })
