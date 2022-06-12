@@ -53,16 +53,16 @@ namespace PythonNetWrapper
                 return $"Python Error: {ex} ({nameof(ExecuteMethodOnScriptObject)})";
             }
         }
-        public PyObject? ExecuteCommand(string command, out string log)
+        public T ExecuteCommand<T>(string command, out string log)
         {
-            PyObject result = null;
+            T result = default;
             log = "";
             try
             {
                 using (Py.GIL())
                 {
                     var pyCompile = Python.Runtime.PythonEngine.Compile(command);
-                    result = module.Value.Execute(pyCompile);
+                    result = module.Value.Execute(pyCompile).As<T>();
                     log = _logger.ReadStream();
                     _logger.flush();
                 }
@@ -75,9 +75,9 @@ namespace PythonNetWrapper
             return result;
         }
 
-        public PyObject? ImportScript(string fileName, out string log)
+        public T ImportScript<T>(string fileName, out string log)
         {
-            PyObject result = null;
+            T result = default;
             log = "";
 
             try
@@ -101,7 +101,7 @@ namespace PythonNetWrapper
                         sys.path.append(os.path.dirname(os.path.expanduser(fileName)));
                     }
 
-                    result = Py.Import(Path.GetFileNameWithoutExtension(fileName));
+                    result = Py.Import(Path.GetFileNameWithoutExtension(fileName)).As<T>();
                     log = _logger.ReadStream();
                     _logger.flush();
                 }
@@ -115,13 +115,13 @@ namespace PythonNetWrapper
 
         }
 
-        public PyObject? ExecuteMethodOnScriptObject(PyObject script, string methodName, out string log, params PyObject[] args)
+        public T ExecuteMethodOnScriptObject<T>(PyObject script, string methodName, out string log, params PyObject[] args)
         {
-            PyObject result = null;
+            T result = default;
 
             try
             {
-                result = script.InvokeMethod(methodName, args);
+                result = script.InvokeMethod(methodName, args).As<T>();
                 log = _logger.ReadStream();
                 _logger.flush();
                 return result;
@@ -133,9 +133,9 @@ namespace PythonNetWrapper
 
             return result;
         }
-        public PyObject? ExecuteMethod(string fileName, string methodName, out string log, params PyObject[] args)
+        public T ExecuteMethod<T>(string fileName, string methodName, out string log, params PyObject[] args)
         {
-            PyObject result = null;
+            T result = default;
             log = "";
 
             try
@@ -160,7 +160,7 @@ namespace PythonNetWrapper
                     }
 
                     PyObject fromFile = Py.Import(Path.GetFileNameWithoutExtension(fileName));
-                    result = fromFile.InvokeMethod(methodName, args);
+                    result = fromFile.InvokeMethod(methodName, args).As<T>();
                     log = _logger.ReadStream();
                     _logger.flush();
                 }
@@ -226,7 +226,7 @@ namespace PythonNetWrapper
                                      "sys.stdout.flush()\n" +
                                      "sys.stderr = Logger\n" +
                                      "sys.stderr.flush()\n";
-            ExecuteCommand(loggerSrc, out _);
+            ExecuteCommand<PyObject>(loggerSrc, out _);
         }
     }
 }

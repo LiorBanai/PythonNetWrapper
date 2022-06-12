@@ -1,4 +1,5 @@
-﻿using Python.Runtime;
+﻿using System;
+using Python.Runtime;
 
 namespace PythonNetWrapper.Interfaces
 {
@@ -6,9 +7,9 @@ namespace PythonNetWrapper.Interfaces
     {
         void Initialize();
         void ShutDown();
-        PyObject? ImportScript(string fileName, out string log);
-        PyObject? RunScript(string script, out string log);
-        PyObject? ExecuteMethod(string fileName, string methodName, out string log, params PyObject[] args);
-        PyObject? ExecuteMethodOnScriptObject(PyObject script, string methodName, out string log, params PyObject[] args);
+        T ImportScript<T>(string fileName, out string log);
+        T RunScript<T>(string script, out string log);
+        T ExecuteMethod<T>(string fileName, string methodName, out string log, params PyObject[] args);
+        T ExecuteMethodOnScriptObject<T>(PyObject script, string methodName, out string log, params PyObject[] args);
     }
 }

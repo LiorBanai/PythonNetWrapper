@@ -77,25 +77,25 @@ namespace PythonNetWrapper
             }
         }
 
-        public PyObject? RunScript(string script, out string log)
+        public T RunScript<T>(string script, out string log)
         {
-            return _pythonWrapperEngine.ExecuteCommand(script, out log);
+            return _pythonWrapperEngine.ExecuteCommand<T>(script, out log);
         }
 
-        public PyObject? ImportScript(string fileName, out string log)
+        public T ImportScript<T>(string fileName, out string log)
         {
-            return _pythonWrapperEngine.ImportScript(fileName, out log);
+            return _pythonWrapperEngine.ImportScript<T>(fileName, out log);
         }
 
-        public PyObject? ExecuteMethod(string fileName, string methodName, out string log, params PyObject[] args)
+        public T ExecuteMethod<T>(string fileName, string methodName, out string log, params PyObject[] args)
         {
-            return _pythonWrapperEngine.ExecuteMethod(fileName, methodName, out log, args);
+            return _pythonWrapperEngine.ExecuteMethod<T>(fileName, methodName, out log, args);
         }
 
-        public PyObject? ExecuteMethodOnScriptObject(PyObject script, string methodName, out string log,
+        public T ExecuteMethodOnScriptObject<T>(PyObject script, string methodName, out string log,
             params PyObject[] args)
         {
-            return _pythonWrapperEngine.ExecuteMethodOnScriptObject(script, methodName, out log, args);
+            return _pythonWrapperEngine.ExecuteMethodOnScriptObject<T>(script, methodName, out log, args);
 
         }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -47,7 +48,7 @@ namespace PythonNetWrapper.Tests
             timestamps.Append(new PyInt(100));
             timestamps.Append(new PyInt(200));
 
-            var res = controller.ExecuteMethod(filename, "testvalue", out _, timestamps, types);
+            var res = controller.ExecuteMethod<PyList>(filename, "testvalue", out _, timestamps, types);
 
         }
 
