@@ -14,47 +14,52 @@
 a library for executing pythonnet in C# projects
 
 This library  allows you to run python scripts or call python methods inside your C# project.
-the basic usage is just to create PythonEngineController object and use it methods (call Initialize before use):
+the basic usage is just to create PythonWrapperController object and use it methods (call Initialize before use):
 
 
 ```cs
-    public interface IPythonEngineController
+    public interface IPythonWrapperController
     {
         void Initialize();
         void ShutDown();
-        PyObject ImportScript(string fileName, out string log);
-        PyObject RunScript(string script, out string log);
-        PyObject ExecuteMethod(string fileName, string methodName, out string log, params PyObject[] args);
-        PyObject ExecuteMethodOnScriptObject(PyObject script, string methodName, out string log, params PyObject[] args);
+        PyObject? ImportScript(string fileName, out string log);
+        PyObject? RunScript(string script, out string log);
+        PyObject? ExecuteMethod(string fileName, string methodName, out string log, params PyObject[] args);
+        PyObject? ExecuteMethodOnScriptObject(PyObject script, string methodName, out string log, params PyObject[] args);
     }
 ```
 
 
 ```cs  
-public class PythonEngineController : IPythonEngineController
+public class PythonWrapperController : IPythonWrapperController
     {
-        private readonly IPythonEngine _pythonEngine;
+        private readonly IPythonWrapperEngine _pythonWrapperEngine;
         private string pathToVirtualEnv;
         private string pythonExecutableFolder;
-        private string pythonExe = "python37.dll";
+        private string pythonDll = "python37.dll";
         private IntPtr pythonThreads;
         private bool enableLogging;
 
-        public PythonEngineController(IPythonEngine pythonEngine, string pathToVirtualEnv, string pythonExecutableFolder, string pythonExe, bool enableLogging)
+        public PythonWrapperController(IPythonWrapperEngine pythonWrapperEngine, string pathToVirtualEnv,
+        string pythonExecutableFolder, string pythonDll = "python37.dll", bool enableLogging = true)
         {
-            _pythonEngine = pythonEngine;
+            _pythonWrapperEngine = pythonWrapperEngine;
             this.pathToVirtualEnv = pathToVirtualEnv;
             this.pythonExecutableFolder = pythonExecutableFolder;
-            if (!string.IsNullOrEmpty(pythonExe))
+            if (!string.IsNullOrEmpty(pythonDll))
             {
-                this.pythonExe = pythonExe;
+                this.pythonDll = pythonDll;
             }
             this.enableLogging = enableLogging;
         }
-        ..
+
+        public PythonWrapperController(string pathToVirtualEnv, string pythonExecutableFolder, string pythonDll = "python37.dll",
+        bool enableLogging = true):this(new PythonWrapperNet(), pathToVirtualEnv, pythonExecutableFolder, pythonDll, enableLogging)
+        {
+        }
+         ..
 ```
 
-you need to supply the PythonNet class which implements IPythonEngine.
 
 you have the following options:
 1. ImportScript: allows you to import a script and call methods on that script.
