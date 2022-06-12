@@ -21,7 +21,7 @@ jobs:
       Solution_Name: PythonNetWrapper.sln                         # Replace with your solution name, i.e. MyWpfApp.sln.
       Test_Project_Path: PythonnetWrapper.Tests\PythonnetWrapper.Tests.csproj     # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
      
-    steps:
+    steps:   
     - name: Checkout
       uses: actions/checkout@v2
       with:
@@ -50,7 +50,11 @@ jobs:
         Configuration: ${{ matrix.configuration }}
     # Execute all unit tests in the solution
     - name: Execute unit tests
-      run: dotnet test
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.7' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+        architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+    - run: dotnet test
 
     # Publish Artifacts 
     - name: 'Publish Artifacts'   
