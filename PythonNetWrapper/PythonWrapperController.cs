@@ -15,6 +15,7 @@ namespace PythonNetWrapper
         private IntPtr pythonThreads;
         private bool enableLogging;
         private bool throwOnErrors;
+        private bool initialized;
         public PythonWrapperController(IPythonWrapperEngine pythonWrapperEngine, string pathToVirtualEnv, string pythonExecutableFolder, string pythonDll = "python37.dll", bool throwOnErrors = true, bool enableLogging = true)
         {
             _pythonWrapperEngine = pythonWrapperEngine;
@@ -33,6 +34,11 @@ namespace PythonNetWrapper
         }
         public void Initialize()
         {
+            if (initialized)
+            {
+                return;
+
+            }
             var path = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
             string pathEnv = string.Empty;
             var searchPAth = new List<string>();
@@ -76,6 +82,8 @@ namespace PythonNetWrapper
             {
                 _pythonWrapperEngine.SetupLogger(throwOnErrors);
             }
+
+            initialized = true;
         }
 
         public T RunScript<T>(string script, out string log)

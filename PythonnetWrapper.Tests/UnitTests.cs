@@ -13,8 +13,9 @@ namespace PythonNetWrapper.Tests
     {
         public static IContainer Container { get; set; }
 
-        [TestInitialize]
-        public void TestInitialize()
+
+        [ClassInitialize]
+        public static void TestInitialize(TestContext context)
         {
             string pythonLocation = Environment.GetEnvironmentVariable("pythonLocation");
             if (string.IsNullOrEmpty(pythonLocation))
