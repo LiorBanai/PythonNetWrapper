@@ -29,7 +29,7 @@ namespace PythonnetWrapper.Tests
             Container.Resolve<IPythonEngineController>().Initialize();
             Container.Resolve<IPythonEngine>().Initialize(Container);
         }
-        //[TestMethod]
+        [TestMethod]
         public void TestMethod1()
         {
             var controller = Container.Resolve<IPythonEngineController>();
@@ -45,5 +45,6 @@ namespace PythonnetWrapper.Tests
 
         }
 
+        
     }
 }
