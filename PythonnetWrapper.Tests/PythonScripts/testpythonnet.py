@@ -1,5 +1,11 @@
 ﻿import builtins
 
+def returnintlist(R):
+    list = []
+    for i in R:
+        list.append(i)
+    return list
+
 def return3int(R, PVC ):
    for x in R:
     print(x) #write(x)

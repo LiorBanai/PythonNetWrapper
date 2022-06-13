@@ -61,7 +61,7 @@ namespace PythonNetWrapper
             {
                 using (Py.GIL())
                 {
-                    var pyCompile = Python.Runtime.PythonEngine.Compile(command);
+                    var pyCompile = PythonEngine.Compile(command);
                     result = module.Value.Execute(pyCompile).As<T>();
                     log = _logger.ReadStream();
                     _logger.flush();
@@ -79,6 +79,31 @@ namespace PythonNetWrapper
             return result;
         }
 
+        private void AddToPathIfNeeded(string fileName,dynamic sys, dynamic os)
+        {
+            string filePath = Path.GetDirectoryName(fileName);
+            bool pathExist = existingPaths.Contains(fileName);
+            if (!pathExist)
+            {
+                foreach (var p in sys.path)
+                {
+                    var pythonPath = p.ToString();
+                    existingPaths.Add(pythonPath);
+                    if (pythonPath.Contains(filePath))
+                    {
+                        pathExist = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!pathExist)
+            {
+                var newPath = os.path.dirname(os.path.expanduser(fileName));
+                sys.path.append(newPath);
+                existingPaths.Add(newPath.ToString());
+            }
+        }
         public PyObject ImportScript(string fileName, bool throwOnErrors, out string log)
         {
             PyObject result = default;
@@ -86,34 +111,11 @@ namespace PythonNetWrapper
 
             try
             {
-                string filePath = Path.GetDirectoryName(fileName);
                 using (Py.GIL())
                 {
                     dynamic sys = Py.Import("sys");
                     dynamic os = Py.Import("os");
-
-                    bool pathExist = existingPaths.Contains(fileName);
-                    if (!pathExist)
-                    {
-                        foreach (var p in sys.path)
-                        {
-                            var pythonPath = p.ToString(); 
-                            existingPaths.Add(pythonPath);
-                            if (pythonPath.Contains(filePath))
-                            {
-                                pathExist = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (!pathExist)
-                    {
-                        var newPath = os.path.dirname(os.path.expanduser(fileName));
-                        sys.path.append(newPath);
-                        existingPaths.Add(newPath.ToString());
-                    }
-
+                    AddToPathIfNeeded(fileName,sys,os);
                     result = Py.Import(Path.GetFileNameWithoutExtension(fileName));
                     log = _logger.ReadStream();
                     _logger.flush();
@@ -168,23 +170,10 @@ namespace PythonNetWrapper
                 {
                     dynamic sys = Py.Import("sys");
                     dynamic os = Py.Import("os");
-                    bool pathExist = false;
-                    foreach (var p in sys.path)
-                    {
-                        if (p.ToString().Contains(Path.GetDirectoryName(fileName)))
-                        {
-                            pathExist = true;
-                            break;
-                        }
-                    }
-
-                    if (!pathExist)
-                    {
-                        sys.path.append(os.path.dirname(os.path.expanduser(fileName)));
-                    }
-
+                    AddToPathIfNeeded(fileName,sys,os);
                     PyObject fromFile = Py.Import(Path.GetFileNameWithoutExtension(fileName));
-                    result = fromFile.InvokeMethod(methodName, args).As<T>();
+                    var nativeResult = fromFile.InvokeMethod(methodName, args);
+                    result = nativeResult.As<T>();
                     log = _logger.ReadStream();
                     _logger.flush();
                 }
@@ -229,7 +218,6 @@ namespace PythonNetWrapper
             {
                 dynamic sys = Py.Import("sys");
                 dynamic os = Py.Import("os");
-
                 foreach (string path in searchPaths)
                 {
                     sys.path.append(os.path.dirname(os.path.expanduser(path)));

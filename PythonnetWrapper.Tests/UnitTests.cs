@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Autofac;
@@ -66,6 +67,18 @@ namespace PythonNetWrapper.Tests
 
             var res = controller.ExecuteMethod<bool>(filename, "returntruebool", out _);
             Assert.AreEqual(true, res);
+        }
+
+        //[TestMethod]
+        public void TestMothodReturnlistOfInt()
+        {
+            var controller = Container.Resolve<IPythonWrapperController>();
+            var filename = Path.Combine(Directory.GetCurrentDirectory(), @"pythonScripts\testpythonnet.py");
+            PyList ints = new PyList();
+            ints.Append(new PyInt(1));
+            ints.Append(new PyInt(2));
+            var res = controller.ExecuteMethod<List<Int32>>(filename, "returnintlist", out _, ints);
+            Assert.AreEqual(PyObject.None, res);
         }
 
         [TestMethod]
