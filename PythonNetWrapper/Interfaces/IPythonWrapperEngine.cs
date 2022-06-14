@@ -58,14 +58,16 @@ namespace PythonNetWrapper.Interfaces
         /// </summary>
         /// <returns>List Of Python Paths (sys.path)</returns>
         IList<string> SearchPaths();
-        string PythonPaths();
-
         /// <summary>
-        /// Add search paths (to sys.path)
+        /// the os and sys paths
         /// </summary>
-        /// <param name="paths">list of paths to add</param>
-        void SetSearchPath(IList<string> paths);
-
+        /// <returns></returns>
+        string PythonPaths();
+        /// <summary>
+        /// Add search paths (each one needs to ends with /)
+        /// </summary>
+        /// <param name="paths">list of paths</param>
+        void AddSearchPaths(List<string> paths);
         // initializes this engine with the app container
         void Initialize(IContainer appContainer);
     }

@@ -76,7 +76,7 @@ namespace PythonNetWrapper
             PythonEngine.PythonHome = pathToVirtualEnv;
             PythonEngine.Initialize();
             pythonThreads = PythonEngine.BeginAllowThreads();
-            _pythonWrapperEngine.SetSearchPath(searchPAth);
+            _pythonWrapperEngine.AddSearchPaths(searchPAth);
             var paths = _pythonWrapperEngine.PythonPaths();
             if (enableLogging)
             {
@@ -108,6 +108,16 @@ namespace PythonNetWrapper
 
         }
 
+        public string AddSearchPaths(List<string> paths)
+        {
+            _pythonWrapperEngine.AddSearchPaths(paths);
+            return _pythonWrapperEngine.PythonPaths();
+        }
+        
+        public string PythonPaths()
+        {
+            return _pythonWrapperEngine.PythonPaths();
+        }
         public void ShutDown()
         {
             if (pythonThreads != IntPtr.Zero)

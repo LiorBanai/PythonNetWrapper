@@ -53,6 +53,23 @@ namespace PythonNetWrapper
                 return $"Python Error: {ex} ({nameof(ExecuteMethodOnScriptObject)})";
             }
         }
+
+        public void AddSearchPaths(List<string> paths)
+        {
+            var searchPaths = paths.Where(Directory.Exists).Distinct().ToList();
+
+            using (Py.GIL())
+            {
+                dynamic sys = Py.Import("sys");
+                dynamic os = Py.Import("os");
+                foreach (string path in searchPaths)
+                {
+                    sys.path.append(os.path.dirname(os.path.expanduser(path)));
+                }
+            }
+
+        }
+
         public T ExecuteCommand<T>(string command, bool throwOnErrors, out string log)
         {
             T result = default;
@@ -209,22 +226,7 @@ namespace PythonNetWrapper
 
             return pythonPaths.Select(Path.GetFullPath).ToList();
         }
-
-        public void SetSearchPath(IList<string> paths)
-        {
-            var searchPaths = paths.Where(Directory.Exists).Distinct().ToList();
-
-            using (Py.GIL())
-            {
-                dynamic sys = Py.Import("sys");
-                dynamic os = Py.Import("os");
-                foreach (string path in searchPaths)
-                {
-                    sys.path.append(os.path.dirname(os.path.expanduser(path)));
-                }
-            }
-        }
-
+        
         public void SetVariable(string name, object value)
         {
             using (Py.GIL())
