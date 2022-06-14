@@ -125,6 +125,7 @@ namespace PythonNetWrapper
                 PythonEngine.EndAllowThreads(pythonThreads);
             }
             PythonEngine.Shutdown();
+            initialized = false;
         }
     }
 }
