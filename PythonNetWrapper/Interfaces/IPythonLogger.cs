@@ -1,6 +1,6 @@
 ﻿namespace PythonNetWrapper.Interfaces
 {
-    interface IPythonLogger
+    public interface IPythonLogger
     {
         // flushes the buffer
         void flush();

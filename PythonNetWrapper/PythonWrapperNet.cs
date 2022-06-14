@@ -12,13 +12,17 @@ namespace PythonNetWrapper
     public class PythonWrapperNet : IPythonWrapperEngine
     {
         private Lazy<PyModule> module;
-        private readonly PythonLogger _logger = new PythonLogger();
+        private readonly IPythonLogger _logger = new PythonLogger();
         private List<string> existingPaths = new List<string>();
         public PythonWrapperNet()
         {
             module = new Lazy<PyModule>(Py.CreateScope);
         }
 
+        public PythonWrapperNet(IPythonLogger logger):this()
+        {
+            _logger=logger;
+        }
         public void Dispose()
         {
             module.Value.Dispose();

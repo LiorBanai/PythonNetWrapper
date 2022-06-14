@@ -29,7 +29,12 @@ namespace PythonNetWrapper
             this.throwOnErrors = throwOnErrors;
         }
 
-        public PythonWrapperController(string pathToVirtualEnv, string pythonExecutableFolder, string pythonDll = "python37.dll", bool throwOnErrors = true, bool enableLogging = true) : this(new PythonWrapperNet(), pathToVirtualEnv, pythonExecutableFolder, pythonDll, throwOnErrors, enableLogging)
+        public PythonWrapperController(string pathToVirtualEnv, string pythonExecutableFolder, string pythonDll = "python37.dll", bool throwOnErrors = true, bool enableLogging = true)
+            : this(new PythonWrapperNet(), pathToVirtualEnv, pythonExecutableFolder, pythonDll, throwOnErrors, enableLogging)
+        {
+        }
+        public PythonWrapperController(string pathToVirtualEnv, string pythonExecutableFolder, IPythonLogger logger, string pythonDll = "python37.dll", bool throwOnErrors = true, bool enableLogging = true)
+            : this(new PythonWrapperNet(logger), pathToVirtualEnv, pythonExecutableFolder, pythonDll, throwOnErrors, enableLogging)
         {
         }
         public void Initialize()
@@ -88,12 +93,12 @@ namespace PythonNetWrapper
 
         public T ExecuteCommandOrScript<T>(string script, out string log)
         {
-            return _pythonWrapperEngine.ExecuteCommandOrScript<T>(script,throwOnErrors, out log);
+            return _pythonWrapperEngine.ExecuteCommandOrScript<T>(script, throwOnErrors, out log);
         }
 
         public PyObject ImportScript(string fileName, out string log)
         {
-            return _pythonWrapperEngine.ImportScript(fileName,throwOnErrors, out log);
+            return _pythonWrapperEngine.ImportScript(fileName, throwOnErrors, out log);
         }
 
         public T ExecuteMethod<T>(string fileName, string methodName, out string log, params PyObject[] args)
@@ -104,7 +109,7 @@ namespace PythonNetWrapper
         public T ExecuteMethodOnScriptObject<T>(PyObject script, string methodName, out string log,
             params PyObject[] args)
         {
-            return _pythonWrapperEngine.ExecuteMethodOnScriptObject<T>(script, methodName,throwOnErrors, out log, args);
+            return _pythonWrapperEngine.ExecuteMethodOnScriptObject<T>(script, methodName, throwOnErrors, out log, args);
 
         }
 
@@ -113,7 +118,7 @@ namespace PythonNetWrapper
             _pythonWrapperEngine.AddSearchPaths(paths);
             return _pythonWrapperEngine.PythonPaths();
         }
-        
+
         public string PythonPaths()
         {
             return _pythonWrapperEngine.PythonPaths();
