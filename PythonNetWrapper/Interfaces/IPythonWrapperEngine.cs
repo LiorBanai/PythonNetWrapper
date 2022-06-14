@@ -11,11 +11,11 @@ namespace PythonNetWrapper.Interfaces
         /// Executes a Python command text or script 
         /// </summary>
         /// <typeparam name="T">the return type of the result (Or PyObject if no result are returned)</typeparam>
-        /// <param name="command">The text to execute</param>
+        /// <param name="textCommandOrScript">The text to execute</param>
         /// <param name="throwOnErrors"></param>
         /// <param name="log">Output log print method (if Logger is setup)</param>
         /// <returns>The result (or PyObject that is PyObject.None)</returns>
-        T ExecuteCommand<T>(string command, bool throwOnErrors, out string log);
+        T ExecuteCommandOrScript<T>(string textCommandOrScript, bool throwOnErrors, out string log);
         /// <summary>
         /// Call Py.Import on the GetFileNameWithoutExtension of the file.
         /// </summary>

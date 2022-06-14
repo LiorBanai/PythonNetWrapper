@@ -86,9 +86,9 @@ namespace PythonNetWrapper
             initialized = true;
         }
 
-        public T RunScript<T>(string script, out string log)
+        public T ExecuteCommandOrScript<T>(string script, out string log)
         {
-            return _pythonWrapperEngine.ExecuteCommand<T>(script,throwOnErrors, out log);
+            return _pythonWrapperEngine.ExecuteCommandOrScript<T>(script,throwOnErrors, out log);
         }
 
         public PyObject ImportScript(string fileName, out string log)

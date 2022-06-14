@@ -70,7 +70,7 @@ namespace PythonNetWrapper
 
         }
 
-        public T ExecuteCommand<T>(string command, bool throwOnErrors, out string log)
+        public T ExecuteCommandOrScript<T>(string command, bool throwOnErrors, out string log)
         {
             T result = default;
             log = "";
@@ -86,7 +86,7 @@ namespace PythonNetWrapper
             }
             catch (Exception ex)
             {
-                log = $"Python Error: {ex} ({nameof(ExecuteCommand)})";
+                log = $"Python Error: {ex} ({nameof(ExecuteCommandOrScript)})";
                 if (throwOnErrors)
                 {
                     throw;
@@ -244,7 +244,7 @@ namespace PythonNetWrapper
                                      "sys.stdout.flush()\n" +
                                      "sys.stderr = Logger\n" +
                                      "sys.stderr.flush()\n";
-            ExecuteCommand<PyObject>(loggerSrc, throwOnErrors, out _);
+            ExecuteCommandOrScript<PyObject>(loggerSrc, throwOnErrors, out _);
         }
     }
 }

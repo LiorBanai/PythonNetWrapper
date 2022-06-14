@@ -15,7 +15,7 @@
 	  <PackageId>PythonNetWrapper</PackageId>
 	  <Authors>Lior Banai</Authors>
 	  <RepositoryType>git</RepositoryType>
-	  <Version>0.8.3.4</Version>
+	  <Version>0.8.3.5</Version>
 	  <PackageIcon>PythonnetWrapper.png</PackageIcon>
 	  <PackageReleaseNotes>Initial version</PackageReleaseNotes>
 	  <Copyright>Lior Banai © 2022</Copyright>
