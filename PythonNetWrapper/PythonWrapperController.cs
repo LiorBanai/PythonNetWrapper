@@ -45,50 +45,61 @@ namespace PythonNetWrapper
 
             }
             var path = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
-            string pathEnv = string.Empty;
-            var searchPAth = new List<string>();
+            var searchPath = new List<string>();
             if (!string.IsNullOrEmpty(pathToVirtualEnv) && Directory.Exists(pathToVirtualEnv))
             {
                 string pathToLib = Path.Combine(pathToVirtualEnv, "lib");
                 string pathToPackages = Path.Combine(pathToLib, "site-packages");
                 string env = $"{pathToPackages};{pathToLib}";
                 Environment.SetEnvironmentVariable("PYTHONPATH", env, EnvironmentVariableTarget.Process);
-                pathEnv = path = $"{path};{pathToPackages};{pathToLib}";
-                searchPAth.Add(pathToLib);
-                searchPAth.Add(pathToPackages);
+                path = $"{path};{pathToPackages};{pathToLib}";
+                searchPath.Add(pathToLib);
+                searchPath.Add(pathToPackages);
             }
+            var finalPathEnv = path;
 
             if (!string.IsNullOrEmpty(pythonExecutableFolder) && Directory.Exists(pythonExecutableFolder))
             {
-                pathEnv = $"{path};{pythonExecutableFolder}";
-                string pythonPath = Path.Combine(pythonExecutableFolder, pythonDll);
+                finalPathEnv = $"{finalPathEnv};{pythonExecutableFolder}";
+            }
+            Environment.SetEnvironmentVariable("PATH", finalPathEnv, EnvironmentVariableTarget.Process);
+
+            string pythonPath = Path.Combine(pythonExecutableFolder, pythonDll);
+            try
+            {
                 if (File.Exists(pythonPath))
+                {
+
                     Runtime.PythonDLL = pythonPath;
+                }
 
+                //Environment.SetEnvironmentVariable("PATH", pathToVirtualEnv, EnvironmentVariableTarget.Process);
+                //Environment.SetEnvironmentVariable("PYTHONHOME", pathToVirtualEnv, EnvironmentVariableTarget.Process);
+                //Environment.SetEnvironmentVariable("PYTHONPATH", $"{pathToVirtualEnv}\\Lib\\site-packages;{pathToVirtualEnv}\\Lib", EnvironmentVariableTarget.Process);
+
+                PythonEngine.PythonPath = PythonEngine.PythonPath + Path.PathSeparator + Environment.GetEnvironmentVariable("PYTHONPATH", EnvironmentVariableTarget.Process);
+                if (!string.IsNullOrEmpty(pathToVirtualEnv))
+                {
+                    PythonEngine.PythonHome = pathToVirtualEnv;
+                }
+                PythonEngine.Initialize();
+                pythonThreads = PythonEngine.BeginAllowThreads();
+                _pythonWrapperEngine.AddSearchPaths(searchPath);
+                var paths = _pythonWrapperEngine.PythonPaths();
+                if (enableLogging)
+                {
+                    _pythonWrapperEngine.SetupLogger(throwOnErrors);
+                }
+
+                initialized = true;
             }
-
-            if (!string.IsNullOrEmpty(pathEnv))
+            catch (Exception)
             {
-                Environment.SetEnvironmentVariable("PATH", pathEnv, EnvironmentVariableTarget.Process);
+                if (throwOnErrors)
+                    throw;
             }
 
-            //Environment.SetEnvironmentVariable("PATH", pathToVirtualEnv, EnvironmentVariableTarget.Process);
-            //Environment.SetEnvironmentVariable("PYTHONHOME", pathToVirtualEnv, EnvironmentVariableTarget.Process);
-            //Environment.SetEnvironmentVariable("PYTHONPATH", $"{pathToVirtualEnv}\\Lib\\site-packages;{pathToVirtualEnv}\\Lib", EnvironmentVariableTarget.Process);
 
-            PythonEngine.PythonPath = PythonEngine.PythonPath + Path.PathSeparator +
-                                                     Environment.GetEnvironmentVariable("PYTHONPATH", EnvironmentVariableTarget.Process);
-            PythonEngine.PythonHome = pathToVirtualEnv;
-            PythonEngine.Initialize();
-            pythonThreads = PythonEngine.BeginAllowThreads();
-            _pythonWrapperEngine.AddSearchPaths(searchPAth);
-            var paths = _pythonWrapperEngine.PythonPaths();
-            if (enableLogging)
-            {
-                _pythonWrapperEngine.SetupLogger(throwOnErrors);
-            }
-
-            initialized = true;
         }
 
         public T ExecuteCommandOrScript<T>(string script, out string log)
@@ -115,22 +126,57 @@ namespace PythonNetWrapper
 
         public string AddSearchPaths(List<string> paths)
         {
-            _pythonWrapperEngine.AddSearchPaths(paths);
-            return _pythonWrapperEngine.PythonPaths();
+            try
+            {
+                _pythonWrapperEngine.AddSearchPaths(paths);
+                return _pythonWrapperEngine.PythonPaths();
+            }
+            catch (Exception)
+            {
+                if (throwOnErrors)
+                {
+                    throw;
+                }
+            }
+
+            return string.Empty;
         }
 
         public string PythonPaths()
         {
-            return _pythonWrapperEngine.PythonPaths();
+            try
+            {
+                return _pythonWrapperEngine.PythonPaths();
+            }
+            catch (Exception e)
+            {
+                if (throwOnErrors)
+                {
+                    throw;
+                }
+
+                return $"ERROR :{e}";
+            }
         }
         public void ShutDown()
         {
-            if (pythonThreads != IntPtr.Zero)
+            try
             {
-                PythonEngine.EndAllowThreads(pythonThreads);
+                if (pythonThreads != IntPtr.Zero)
+                {
+                    PythonEngine.EndAllowThreads(pythonThreads);
+                }
+                PythonEngine.Shutdown();
+                initialized = false;
+
             }
-            PythonEngine.Shutdown();
-            initialized = false;
+            catch (Exception)
+            {
+                if (throwOnErrors)
+                {
+                    throw;
+                }
+            }
         }
     }
 }
