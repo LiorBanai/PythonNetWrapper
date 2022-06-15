@@ -5,6 +5,7 @@ using System.IO;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Python.Runtime;
+using Python.Runtime.Codecs;
 using PythonNetWrapper.Interfaces;
 
 namespace PythonNetWrapper.Tests
@@ -37,6 +38,8 @@ namespace PythonNetWrapper.Tests
             Container = builder.Build();
             Container.Resolve<IPythonWrapperController>().Initialize();
             Container.Resolve<IPythonWrapperEngine>().Initialize(Container);
+            PythonEngine.Initialize();
+
         }
         [TestMethod]
         public void TestMethodReturnInteger()
@@ -82,14 +85,25 @@ namespace PythonNetWrapper.Tests
         {
             var controller = Container.Resolve<IPythonWrapperController>();
             var filename = Path.Combine(Directory.GetCurrentDirectory(), @"pythonScripts\testpythonnet.py");
-            PyList l = new PyList();
-            l.Append(new PyInt(1));
-            l.Append(new PyInt(2));
+            var items = new List<PyObject>() { new PyInt(1), new PyInt(2), new PyInt(3) };
+            ListDecoder codec=new ListDecoder();
+            using var pyList = new PyList(items.ToArray());
+            using var pyListType = pyList.GetPythonType();
+            Assert.IsTrue(codec.CanDecode(pyListType, typeof(IList<bool>)));
+            Assert.IsTrue(codec.CanDecode(pyListType, typeof(IList<int>)));
+            Assert.IsFalse(codec.CanDecode(pyListType, typeof(IEnumerable)));
+            Assert.IsFalse(codec.CanDecode(pyListType, typeof(IEnumerable<int>)));
+            Assert.IsFalse(codec.CanDecode(pyListType, typeof(ICollection<float>)));
+            Assert.IsFalse(codec.CanDecode(pyListType, typeof(bool)));
+            Assert.IsFalse(codec.CanDecode(pyListType, typeof(List<int>)));
 
-            var res = controller.ExecuteMethod<IList>(filename, "returnPyListAsIs", out _,l);
+            //convert to list of int
+            IList<int> intList = null;
+             codec.TryDecode(pyList, out intList);
+            var res = controller.ExecuteMethod<IList<int>>(filename, "returnPyListAsIs", out _, pyList);
             Assert.AreEqual(PyObject.None, res);
         }
-        
+
         [TestMethod]
         public void TestMethodNoReturnValue()
         {
