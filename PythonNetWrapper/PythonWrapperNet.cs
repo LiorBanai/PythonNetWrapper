@@ -213,9 +213,9 @@ namespace PythonNetWrapper
             return result;
         }
 
-        public void Initialize(IContainer appContainer)
+        public void Initialize(IContainer appContainer, bool throwOnErrors, out string log)
         {
-            SetVariable("DiContainer", new DiContainer(appContainer));
+            SetVariable("DiContainer", new DiContainer(appContainer), throwOnErrors, out log);
         }
 
         public IList<string> SearchPaths()
@@ -233,17 +233,29 @@ namespace PythonNetWrapper
             return pythonPaths.Select(Path.GetFullPath).ToList();
         }
 
-        public void SetVariable(string name, object value)
+        public void SetVariable(string name, object value, bool throwOnErrors, out string log)
         {
-            using (Py.GIL())
+            log = string.Empty;
+            try
             {
-                module.Value.Set(name, value.ToPython());
+                using (Py.GIL())
+                {
+                    module.Value.Set(name, value.ToPython());
+                }
+            }
+            catch (Exception ex)
+            {
+                log = $"Python Error: {ex} ({nameof(ExecuteCommandOrScript)})";
+                if (throwOnErrors)
+                {
+                    throw;
+                }
             }
         }
 
-        public void SetupLogger(bool throwOnErrors)
+        public void SetupLogger(bool throwOnErrors, out string log)
         {
-            SetVariable("Logger", _logger);
+            SetVariable("Logger", _logger, throwOnErrors, out log);
             const string loggerSrc = "import sys\n" +
                                      "from io import StringIO\n" +
                                      "sys.stdout = Logger\n" +

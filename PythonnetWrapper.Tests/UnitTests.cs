@@ -37,7 +37,7 @@ namespace PythonNetWrapper.Tests
                 .InstancePerLifetimeScope();
             Container = builder.Build();
             Container.Resolve<IPythonWrapperController>().Initialize();
-            Container.Resolve<IPythonWrapperEngine>().Initialize(Container);
+            Container.Resolve<IPythonWrapperEngine>().Initialize(Container,true,out _);
             PythonEngine.Initialize();
 
         }

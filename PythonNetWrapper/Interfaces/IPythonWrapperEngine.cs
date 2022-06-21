@@ -47,12 +47,12 @@ namespace PythonNetWrapper.Interfaces
         /// <returns></returns>
         T ExecuteMethodOnScriptObject<T>(PyObject script, string methodName, bool throwOnErrors, out string log, params PyObject[] args);
         // sets an object in Python's scope
-        void SetVariable(string name, object value);
+        void SetVariable(string name, object value, bool throwOnErrors,out string log);
         /// <summary>
         /// Capture the output of the build in logger
         /// </summary>
         /// <param name="throwOnErrors"></param>
-        void SetupLogger(bool throwOnErrors);
+        void SetupLogger(bool throwOnErrors,out string log);
         /// <summary>
         /// Python's search path
         /// </summary>
@@ -69,6 +69,6 @@ namespace PythonNetWrapper.Interfaces
         /// <param name="paths">list of paths</param>
         void AddSearchPaths(List<string> paths);
         // initializes this engine with the app container
-        void Initialize(IContainer appContainer);
+        void Initialize(IContainer appContainer, bool throwOnErrors, out string log);
     }
 }
