@@ -19,9 +19,9 @@ namespace PythonNetWrapper
             module = new Lazy<PyModule>(Py.CreateScope);
         }
 
-        public PythonWrapperNet(IPythonLogger logger):this()
+        public PythonWrapperNet(IPythonLogger logger) : this()
         {
-            _logger=logger;
+            _logger = logger;
         }
         public void Dispose()
         {
@@ -83,7 +83,8 @@ namespace PythonNetWrapper
                 using (Py.GIL())
                 {
                     var pyCompile = PythonEngine.Compile(command);
-                    result = module.Value.Execute(pyCompile).As<T>();
+                    var nativeResult = module.Value.Execute(pyCompile);
+                    result = nativeResult.As<T>();
                     log = _logger.ReadStream();
                     _logger.flush();
                 }
@@ -100,7 +101,7 @@ namespace PythonNetWrapper
             return result;
         }
 
-        private void AddToPathIfNeeded(string fileName,dynamic sys, dynamic os)
+        private void AddToPathIfNeeded(string fileName, dynamic sys, dynamic os)
         {
             string filePath = Path.GetDirectoryName(fileName);
             bool pathExist = existingPaths.Contains(fileName);
@@ -136,7 +137,7 @@ namespace PythonNetWrapper
                 {
                     dynamic sys = Py.Import("sys");
                     dynamic os = Py.Import("os");
-                    AddToPathIfNeeded(fileName,sys,os);
+                    AddToPathIfNeeded(fileName, sys, os);
                     result = Py.Import(Path.GetFileNameWithoutExtension(fileName));
                     log = _logger.ReadStream();
                     _logger.flush();
@@ -163,7 +164,8 @@ namespace PythonNetWrapper
             {
                 using (Py.GIL())
                 {
-                    result = script.InvokeMethod(methodName, args).As<T>();
+                    var nativeResult = script.InvokeMethod(methodName, args);
+                    result = nativeResult.As<T>();
                     log = _logger.ReadStream();
                     _logger.flush();
                     return result;
@@ -191,7 +193,7 @@ namespace PythonNetWrapper
                 {
                     dynamic sys = Py.Import("sys");
                     dynamic os = Py.Import("os");
-                    AddToPathIfNeeded(fileName,sys,os);
+                    AddToPathIfNeeded(fileName, sys, os);
                     PyObject fromFile = Py.Import(Path.GetFileNameWithoutExtension(fileName));
                     var nativeResult = fromFile.InvokeMethod(methodName, args);
                     result = nativeResult.As<T>();
@@ -230,7 +232,7 @@ namespace PythonNetWrapper
 
             return pythonPaths.Select(Path.GetFullPath).ToList();
         }
-        
+
         public void SetVariable(string name, object value)
         {
             using (Py.GIL())

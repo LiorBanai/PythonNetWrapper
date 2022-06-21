@@ -76,22 +76,27 @@ namespace PythonNetWrapper
                 //Environment.SetEnvironmentVariable("PATH", pathToVirtualEnv, EnvironmentVariableTarget.Process);
                 //Environment.SetEnvironmentVariable("PYTHONHOME", pathToVirtualEnv, EnvironmentVariableTarget.Process);
                 //Environment.SetEnvironmentVariable("PYTHONPATH", $"{pathToVirtualEnv}\\Lib\\site-packages;{pathToVirtualEnv}\\Lib", EnvironmentVariableTarget.Process);
+                var PYTHONPATH = Environment.GetEnvironmentVariable("PYTHONPATH", EnvironmentVariableTarget.Process);
+                
+                if (!string.IsNullOrEmpty(PYTHONPATH))
+                { 
+                    PythonEngine.PythonPath = PythonEngine.PythonPath + Path.PathSeparator + PYTHONPATH;
 
-                PythonEngine.PythonPath = PythonEngine.PythonPath + Path.PathSeparator + Environment.GetEnvironmentVariable("PYTHONPATH", EnvironmentVariableTarget.Process);
-                if (!string.IsNullOrEmpty(pathToVirtualEnv))
-                {
-                    PythonEngine.PythonHome = pathToVirtualEnv;
-                }
-                PythonEngine.Initialize();
-                pythonThreads = PythonEngine.BeginAllowThreads();
-                _pythonWrapperEngine.AddSearchPaths(searchPath);
-                var paths = _pythonWrapperEngine.PythonPaths();
-                if (enableLogging)
-                {
-                    _pythonWrapperEngine.SetupLogger(throwOnErrors);
-                }
+                    if (!string.IsNullOrEmpty(pathToVirtualEnv))
+                    {
+                        PythonEngine.PythonHome = pathToVirtualEnv;
+                    }
+                    PythonEngine.Initialize();
+                    pythonThreads = PythonEngine.BeginAllowThreads();
+                    _pythonWrapperEngine.AddSearchPaths(searchPath);
+                    var paths = _pythonWrapperEngine.PythonPaths();
+                    if (enableLogging)
+                    {
+                        _pythonWrapperEngine.SetupLogger(throwOnErrors);
+                    }
 
-                initialized = true;
+                    initialized = true;
+                }
             }
             catch (Exception)
             {
@@ -126,16 +131,19 @@ namespace PythonNetWrapper
 
         public string AddSearchPaths(List<string> paths)
         {
-            try
-            {
-                _pythonWrapperEngine.AddSearchPaths(paths);
-                return _pythonWrapperEngine.PythonPaths();
-            }
-            catch (Exception)
-            {
-                if (throwOnErrors)
+            if (initialized)
+            { 
+                try
                 {
-                    throw;
+                    _pythonWrapperEngine.AddSearchPaths(paths);
+                    return _pythonWrapperEngine.PythonPaths();
+                }
+                catch (Exception)
+                {
+                    if (throwOnErrors)
+                    {
+                        throw;
+                    }
                 }
             }
 
