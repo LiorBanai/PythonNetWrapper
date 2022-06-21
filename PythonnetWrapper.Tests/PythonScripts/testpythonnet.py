@@ -2,9 +2,6 @@
 import numpy
 def returnPyListAsIs(R):
     return R
-def returnintlist():
-    a = numpy.array([1,2,3])
-    return a
 
 def return3int(R, PVC ):
    for x in R:

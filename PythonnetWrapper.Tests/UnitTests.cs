@@ -72,14 +72,14 @@ namespace PythonNetWrapper.Tests
             Assert.AreEqual(true, res);
         }
 
-        [TestMethod]
-        public void TestMethodReturnlistOfInt()
-        {
-            var controller = Container.Resolve<IPythonWrapperController>();
-            var filename = Path.Combine(Directory.GetCurrentDirectory(), @"pythonScripts\testpythonnet.py");
-            var res = controller.ExecuteMethod<Int32[]>(filename, "returnintlist", out _);
-            Assert.AreEqual(PyObject.None, res);
-        }
+        //[TestMethod]
+        //public void TestMethodReturnlistOfInt()
+        //{
+        //    var controller = Container.Resolve<IPythonWrapperController>();
+        //    var filename = Path.Combine(Directory.GetCurrentDirectory(), @"pythonScripts\testpythonnet.py");
+        //    var res = controller.ExecuteMethod<Int32[]>(filename, "returnintlist", out _);
+        //    Assert.AreEqual(PyObject.None, res);
+        //}
         [TestMethod]
         public void TestMethodReturnlistAsIs()
         {
