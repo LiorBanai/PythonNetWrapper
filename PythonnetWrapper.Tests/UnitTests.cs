@@ -96,12 +96,12 @@ namespace PythonNetWrapper.Tests
             Assert.IsFalse(codec.CanDecode(pyListType, typeof(ICollection<float>)));
             Assert.IsFalse(codec.CanDecode(pyListType, typeof(bool)));
             Assert.IsFalse(codec.CanDecode(pyListType, typeof(List<int>)));
-
+            PyObjectConversions.RegisterDecoder(new ListDecoder());
             //convert to list of int
             IList<int> intList = null;
              codec.TryDecode(pyList, out intList);
-            var res = controller.ExecuteMethod<IList<int>>(filename, "returnPyListAsIs", out _, pyList);
-            Assert.AreEqual(PyObject.None, res);
+            IList<int> res = controller.ExecuteMethod<IList<Int32>>(filename, "returnPyListAsIs", out _, pyList);
+            Assert.AreEqual(1, res[0]);
         }
 
         [TestMethod]
