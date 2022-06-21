@@ -87,6 +87,11 @@ namespace PythonNetWrapper
                 {
                     PythonEngine.PythonHome = pathToVirtualEnv;
                 }
+                else
+                {
+                    PythonEngine.PythonHome = finalPathEnv;
+
+                }
                 PythonEngine.Initialize();
                 pythonThreads = PythonEngine.BeginAllowThreads();
                 _pythonWrapperEngine.AddSearchPaths(searchPath);
