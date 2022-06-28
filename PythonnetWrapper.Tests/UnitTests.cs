@@ -24,12 +24,14 @@ namespace PythonNetWrapper.Tests
             {
                 pythonLocation = @"C:\Users\liorb\AppData\Local\Programs\Python\Python37-64";
             }
+
+            Console.WriteLine($"Python location:{pythonLocation}");
             var builder = new ContainerBuilder();
             builder.RegisterType<PythonWrapperNet>().As<IPythonWrapperEngine>().InstancePerLifetimeScope();
             builder.RegisterType<PythonWrapperController>().As<IPythonWrapperController>().
                 WithParameters(new[]
                 {
-                    new NamedParameter("pathToVirtualEnv", @"d:\pyenv\env"),
+                    new NamedParameter("pathToVirtualEnv", @""),
                     new NamedParameter("pythonExecutableFolder",pythonLocation),
                     new NamedParameter("pythonDll","python37.dll"),
                     new NamedParameter("enableLogging",true)
