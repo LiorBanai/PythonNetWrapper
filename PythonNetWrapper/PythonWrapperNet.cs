@@ -259,7 +259,8 @@ namespace PythonNetWrapper
                 using (Py.GIL())
                 {
                     act();
-                    log = "";
+                    log = _logger.ReadStream();
+                    _logger.flush();
                 }
             }
             catch (Exception ex)

@@ -22,14 +22,14 @@ namespace PythonNetWrapper.Tests
             string pythonLocation = Environment.GetEnvironmentVariable("pythonLocation");
             if (string.IsNullOrEmpty(pythonLocation))
             {
-                pythonLocation = @"C:\Users\liorb\AppData\Local\Programs\Python\Python37";
+                pythonLocation = @"C:\Users\liorb\AppData\Local\Programs\Python\Python37-64";
             }
             var builder = new ContainerBuilder();
             builder.RegisterType<PythonWrapperNet>().As<IPythonWrapperEngine>().InstancePerLifetimeScope();
             builder.RegisterType<PythonWrapperController>().As<IPythonWrapperController>().
                 WithParameters(new[]
                 {
-                    new NamedParameter("pathToVirtualEnv", @""),
+                    new NamedParameter("pathToVirtualEnv", @"d:\pyenv\env"),
                     new NamedParameter("pythonExecutableFolder",pythonLocation),
                     new NamedParameter("pythonDll","python37.dll"),
                     new NamedParameter("enableLogging",true)
@@ -37,7 +37,7 @@ namespace PythonNetWrapper.Tests
                 .InstancePerLifetimeScope();
             Container = builder.Build();
             Container.Resolve<IPythonWrapperController>().Initialize();
-            Container.Resolve<IPythonWrapperEngine>().Initialize(Container,true,out _);
+            Container.Resolve<IPythonWrapperEngine>().Initialize(Container, true, out _);
             PythonEngine.Initialize();
 
         }
@@ -81,12 +81,12 @@ namespace PythonNetWrapper.Tests
         //    Assert.AreEqual(PyObject.None, res);
         //}
         [TestMethod]
-        public void TestMethodReturnlistAsIs()
+        public void TestMethodReturnListAsIs()
         {
             var controller = Container.Resolve<IPythonWrapperController>();
             var filename = Path.Combine(Directory.GetCurrentDirectory(), @"pythonScripts\testpythonnet.py");
             var items = new List<PyObject>() { new PyInt(1), new PyInt(2), new PyInt(3) };
-            ListDecoder codec=new ListDecoder();
+            ListDecoder codec = new ListDecoder();
             using var pyList = new PyList(items.ToArray());
             using var pyListType = pyList.GetPythonType();
             Assert.IsTrue(codec.CanDecode(pyListType, typeof(IList<bool>)));
@@ -99,7 +99,7 @@ namespace PythonNetWrapper.Tests
             PyObjectConversions.RegisterDecoder(new ListDecoder());
             //convert to list of int
             IList<int> intList = null;
-             codec.TryDecode(pyList, out intList);
+            codec.TryDecode(pyList, out intList);
             IList<int> res = controller.ExecuteMethod<IList<Int32>>(filename, "returnPyListAsIs", out _, pyList);
             Assert.AreEqual(1, res[0]);
         }
@@ -139,5 +139,22 @@ namespace PythonNetWrapper.Tests
             var boolReturn = controller.ExecuteMethodOnScriptObject<bool>(script, "returntruebool", out _);
             Assert.AreEqual(true, boolReturn);
         }
+
+        [TestMethod]
+        public void TestPassingNumPyArray()
+        {
+            var controller = Container.Resolve<IPythonWrapperController>();
+            var filename = Path.Combine(Directory.GetCurrentDirectory(), @"pythonScripts\testpythonnet.py");
+            var script = controller.ImportScript(filename, out _);
+            string log = "";
+            controller.ExecuteOnGIL(() =>
+            {
+                dynamic np = Py.Import("numpy");
+                dynamic a = np.array(new List<float> { 1, 2, 3 });
+                bool result = (bool)((dynamic)script).TestPassingNumPyArray(a);
+            }, out log);
+
+        }
+
     }
 }
