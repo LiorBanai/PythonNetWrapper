@@ -47,12 +47,12 @@ namespace PythonNetWrapper.Interfaces
         /// <returns></returns>
         T ExecuteMethodOnScriptObject<T>(PyObject script, string methodName, bool throwOnErrors, out string log, params PyObject[] args);
         // sets an object in Python's scope
-        void SetVariable(string name, object value, bool throwOnErrors,out string log);
+        void SetVariable(string name, object value, bool throwOnErrors, out string log);
         /// <summary>
         /// Capture the output of the build in logger
         /// </summary>
         /// <param name="throwOnErrors"></param>
-        void SetupLogger(bool throwOnErrors,out string log);
+        void SetupLogger(bool throwOnErrors, out string log);
         /// <summary>
         /// Python's search path
         /// </summary>
@@ -68,6 +68,16 @@ namespace PythonNetWrapper.Interfaces
         /// </summary>
         /// <param name="paths">list of paths</param>
         void AddSearchPaths(List<string> paths);
+
+        /// <summary>
+        /// Execute c# code (like creating PyList()) under the GIL
+        /// </summary>
+        /// <param name="action">the action to run</param>
+        /// <param name="throwOnErrors"></param>
+        /// <param name="log">the output log</param>
+        void ExecuteOnGIL(Action action, bool throwOnErrors, out string log);
+
+
         // initializes this engine with the app container
         void Initialize(IContainer appContainer, bool throwOnErrors, out string log);
     }

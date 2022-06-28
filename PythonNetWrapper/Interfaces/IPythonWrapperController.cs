@@ -59,5 +59,11 @@ namespace PythonNetWrapper.Interfaces
         /// <param name="args">The arguments to the method</param>
         /// <returns></returns>
         T ExecuteMethodOnScriptObject<T>(PyObject script, string methodName, out string log, params PyObject[] args);
+        /// <summary>
+        /// Execute c# code (like creating PyList()) under the GIL
+        /// </summary>
+        /// <param name="action">the action to run</param>
+        /// <param name="log">the output log</param>
+        void ExecuteOnGIL(Action action, out string log);
     }
 }

@@ -172,6 +172,11 @@ namespace PythonNetWrapper
                 return $"ERROR :{e}";
             }
         }
+        public void ExecuteOnGIL(Action action, out string log)
+        {
+            _pythonWrapperEngine.ExecuteOnGIL(action, throwOnErrors, out log);
+        }
+
         public void ShutDown()
         {
             try

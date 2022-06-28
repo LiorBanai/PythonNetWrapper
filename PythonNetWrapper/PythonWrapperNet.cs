@@ -252,6 +252,25 @@ namespace PythonNetWrapper
                 }
             }
         }
+        public void ExecuteOnGIL(Action act, bool throwOnErrors, out string log)
+        {
+            try
+            {
+                using (Py.GIL())
+                {
+                    act();
+                    log = "";
+                }
+            }
+            catch (Exception ex)
+            {
+                log = $"Python Error: {ex} ({nameof(ExecuteOnGIL)})";
+                if (throwOnErrors)
+                {
+                    throw;
+                }
+            }
+        }
 
         public void SetupLogger(bool throwOnErrors, out string log)
         {
