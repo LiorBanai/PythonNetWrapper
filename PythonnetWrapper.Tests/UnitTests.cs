@@ -142,21 +142,21 @@ namespace PythonNetWrapper.Tests
             Assert.AreEqual(true, boolReturn);
         }
 
-        [TestMethod]
-        public void TestPassingNumPyArray()
-        {
-            var controller = Container.Resolve<IPythonWrapperController>();
-            var filename = Path.Combine(Directory.GetCurrentDirectory(), @"pythonScripts\testpythonnet.py");
-            var script = controller.ImportScript(filename, out _);
-            string log = "";
-            controller.ExecuteOnGIL(() =>
-            {
-                dynamic np = Py.Import("numpy");
-                dynamic a = np.array(new List<float> { 1, 2, 3 });
-                bool result = (bool)((dynamic)script).TestPassingNumPyArray(a);
-            }, out log);
+        //[TestMethod]
+        //public void TestPassingNumPyArray()
+        //{
+        //    var controller = Container.Resolve<IPythonWrapperController>();
+        //    var filename = Path.Combine(Directory.GetCurrentDirectory(), @"pythonScripts\testpythonnet.py");
+        //    var script = controller.ImportScript(filename, out _);
+        //    string log = "";
+        //    controller.ExecuteOnGIL(() =>
+        //    {
+        //        dynamic np = Py.Import("numpy");
+        //        dynamic a = np.array(new List<float> { 1, 2, 3 });
+        //        bool result = (bool)((dynamic)script).TestPassingNumPyArray(a);
+        //    }, out log);
 
-        }
+        //}
 
     }
 }

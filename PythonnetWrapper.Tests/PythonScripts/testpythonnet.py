@@ -1,5 +1,5 @@
 ﻿import builtins
-import numpy as np 
+
 def returnPyListAsIs(R):
     return R
 
@@ -16,7 +16,3 @@ def returntruebool():
 
 def noreturnvalue():
    print('No Return Value') #write(x)
-
-def TestPassingNumPyArray(timestamp):
-    print(timestamp) #write(x)
-    return True
